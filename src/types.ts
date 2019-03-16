@@ -15,7 +15,7 @@ export enum RobotType {
 export interface IRobot extends IRobotBio {
   working: boolean;
   todoTasks: ITask[];
-  currentTask: ITask;
+  currentTask: ITask | null;
   completedTasks: ITask[];
 }
 

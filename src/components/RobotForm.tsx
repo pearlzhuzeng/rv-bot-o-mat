@@ -1,25 +1,35 @@
 import React, { FormEvent, useState } from "react";
 
-import { RobotType, IRobot } from "../types";
+import { RobotTypes, getTodos } from "./shared";
 
-export const RobotTypes: Map<string, RobotType> = new Map([
-  ["Unipedal", RobotType.Unipedal],
-  ["Bipedal", RobotType.Bipedal],
-  ["Quadrupedal", RobotType.Quadrupedal],
-  ["Arachnid", RobotType.Arachnid],
-  ["Radial", RobotType.Radial],
-  ["Aeronautical", RobotType.Aeronautical]
-]);
+import { IRobot, IRobotBio } from "../types";
 
-export default function RobotForm() {
-  const [draftRobot, setDraftRobot] = useState<Partial<IRobot>>({
+type Props = {
+  onSubmit: (robot: IRobot) => void;
+};
+
+export default function RobotForm({ onSubmit }: Props) {
+  const [draftRobotBio, setDraftRobotBio] = useState<Partial<IRobotBio>>({
     name: "",
-    type: RobotType.Unipedal
+    type: undefined
   });
+
+  const { name, type } = draftRobotBio;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log(draftRobot.name, draftRobot.type);
+
+    if (!name || !type) return;
+
+    const draftRobot = {
+      name,
+      type,
+      working: false,
+      todoTasks: getTodos(type),
+      currentTask: null,
+      completedTasks: []
+    };
+    onSubmit(draftRobot);
   };
 
   return (
@@ -28,31 +38,34 @@ export default function RobotForm() {
         Name:
         <input
           type="text"
-          value={draftRobot.name}
-          onChange={e => setDraftRobot({ ...draftRobot, name: e.target.value })}
+          value={name}
+          onChange={e =>
+            setDraftRobotBio({ ...draftRobotBio, name: e.target.value })
+          }
         />
       </label>
       <label>
         Pick your robot type:
         <select
-          value={draftRobot.type}
+          value={type}
           onChange={e =>
-            setDraftRobot({
-              ...draftRobot,
-              type: RobotTypes.get(e.target.value)
+            setDraftRobotBio({
+              ...draftRobotBio,
+              type: RobotTypes[e.target.value]
             })
           }
         >
-          {Array.from(RobotTypes.entries(), ([key, type]) => {
+          <option value="">--–</option>
+          {Object.entries(RobotTypes).map(([key, type]) => {
             return (
-              <option key={key} value={type}>
+              <option key={key} value={key}>
                 {type}
               </option>
             );
           })}
         </select>
       </label>
-      <input type="submit" value="Set Robot" />
+      <input disabled={!name || !type} type="submit" value="Set Robot" />
     </form>
   );
 }
