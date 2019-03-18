@@ -1,4 +1,5 @@
 import React, { FormEvent, useState } from "react";
+import styled from "styled-components";
 
 import { RobotTypes, getTodos } from "./shared";
 
@@ -6,9 +7,10 @@ import { IRobot, IRobotBio } from "../types";
 
 type Props = {
   onSubmit: (robot: IRobot) => void;
+  disabled: boolean;
 };
 
-export default function RobotForm({ onSubmit }: Props) {
+export default function RobotForm({ onSubmit, disabled }: Props) {
   const [draftRobotBio, setDraftRobotBio] = useState<Partial<IRobotBio>>({
     name: "",
     type: undefined
@@ -33,9 +35,9 @@ export default function RobotForm({ onSubmit }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <label>
-        Name:
+        Give it a name:
         <input
           type="text"
           value={name}
@@ -65,7 +67,25 @@ export default function RobotForm({ onSubmit }: Props) {
           })}
         </select>
       </label>
-      <input disabled={!name || !type} type="submit" value="Set Robot" />
-    </form>
+      <input
+        disabled={!name || !type || disabled}
+        type="submit"
+        value="Set Robot"
+      />
+    </Form>
   );
 }
+
+const Form = styled.form`
+  label {
+    display: block;
+    margin-bottom: 1em;
+
+    input,
+    select {
+      margin-left: 0.5em;
+    }
+  }
+
+  margin-bottom: 2em;
+`;

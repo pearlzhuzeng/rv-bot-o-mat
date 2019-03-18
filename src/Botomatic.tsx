@@ -61,7 +61,13 @@ export default function Botomatic() {
 
   return (
     <Main>
-      <RobotForm onSubmit={robot => dispatch({ type: "set", robot: robot })} />
+      <h2>Create your robot!</h2>
+      <RobotForm
+        disabled={robot ? robot.working : false}
+        onSubmit={robot => dispatch({ type: "set", robot: robot })}
+      />
+
+      <h2>My Robot:</h2>
       {robot && (
         <MyRobot
           robot={robot}
